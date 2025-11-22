@@ -12,19 +12,15 @@ import { DB_NAME } from "./constants.js";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-(async () => {
-  try {
-    // Connect DB after env loaded
-    await connectDB();
-
-    // simple server start (adjust as needed)
-    app.get("/", (req, res) => res.send("Hello from YouTube clone backend"));
-    app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
-  } catch (err) {
-    console.error("Startup error:", err);
-    process.exit(1);
-  }
-})();
+connectDB()
+.then( () => {
+  app.listen( PORT || 8000 , () => {
+    console.log( `Server is Listening on PORT ${PORT}`)
+  })
+})
+.catch( (err) => {
+  console.log("Mongo DB Connection Failed" , err)
+})
 
 
 // import express from 'express'
