@@ -1,26 +1,29 @@
 // src/index.js
-// Load .env first (explicit, safe)
 import dotenv from "dotenv";
-dotenv.config({ path: "./.env" }); // make sure the file is named .env in the project root
+dotenv.config(); // load .env from project root (omit path unless needed)
 
-// Then import everything else
 import connectDB from "./db/index.js";
 import express from "express";
-import mongoose from "mongoose";
-import { DB_NAME } from "./constants.js";
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+
+// parse port robustly
+const PORT = Number.parseInt(process.env.PORT, 10) || 5000;
+
+// sanity logs to debug the exact value/type
+console.log("process.env.PORT (raw):", process.env.PORT, "type:", typeof process.env.PORT);
+console.log("PORT (parsed int fallback):", PORT, "type:", typeof PORT);
 
 connectDB()
-.then( () => {
-  app.listen( PORT || 8000 , () => {
-    console.log( `Server is Listening on PORT ${PORT}`)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is listening on PORT ${PORT}`);
+    });
   })
-})
-.catch( (err) => {
-  console.log("Mongo DB Connection Failed" , err)
-})
+  .catch((err) => {
+    console.error("MongoDB connection failed:", err);
+    process.exit(1);
+  });
 
 
 // import express from 'express'
@@ -41,6 +44,6 @@ connectDB()
 //     }
 //     catch(error){
 //         console.error("Error" , error)
-//         throw error 
+//         throw error
 //     }
 // })()
